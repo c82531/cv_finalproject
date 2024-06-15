@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Face Recognition Main Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: url('../static/backgrpund.png') no-repeat center center/cover;
+            position: relative;
+        }
+
+        .overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(2px);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .content {
+            text-align: center;
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .content h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .content p {
+            margin-bottom: 30px;
+            color: #555;
+        }
+
+        .content button {
+            padding: 10px 20px;
+            margin: 5px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .content button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay">
+        <div class="content">
+            <h1>Welcome to Our Project!</h1>
+            <h2>This is a system based on deepface, a simple and easy-to-use framework for facial recognition and facial attribute analysis</h2>
+            <h3>reference:https://github.com/serengil/deepface</h3>
+            <p>Select one of the following options to proceed:</p>
+            <button onclick="window.location.href='/find?mode=find'">Find Similar Faces</button>
+            <button onclick="window.location.href='/verify?mode=verify'">Verify Faces</button>
+            <button onclick="window.location.href='/analyze?mode=analyze'">Analyze Face</button>
+        </div>
+    </div>
+</body>
+</html>

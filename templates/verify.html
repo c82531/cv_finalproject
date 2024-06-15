@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Face Recognition</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: url('../static/2.jpg') no-repeat center center/cover;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .overlay{
+               background: rgba(255, 255, 255, 0.6);
+        }
+
+        h2 {
+            color: white;
+        }
+
+        #uploadForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            margin-bottom: 20px;
+        }
+
+        #uploadForm input[type="file"] {
+            margin-bottom: 10px;
+        }
+
+        #uploadForm button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        #uploadForm button:hover {
+            background-color: #0056b3;
+        }
+
+        #uploadedImage, #similarImages, #analysisResult {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        img {
+            margin: 10px;
+            width: 200px; /* Adjust width as needed */
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        img:hover {
+            transform: scale(1.05);
+        }
+
+        .container {
+            width: 90%;
+            max-width: 800px;
+        }
+
+        p {
+            color: white;
+        }
+
+    </style>
+</head>
+<body>
+        <div class="container">
+            <h2 id="pageTitle">Upload an Image</h2>
+            <form id="uploadForm" enctype="multipart/form-data">
+                <input type="file" id="imageInput" name="image" accept="image/*">
+                <input type="file" id="secondImageInput" name="second_image" accept="image/*" style="display: none;">
+                <button type="button" onclick="uploadImage()">Upload</button>
+            </form>
+            <h2>Uploaded Image</h2>
+            <div id="uploadedImage">
+                <!-- Uploaded image will be displayed here -->
+            </div>
+            <h2>Verification Result</h2>
+            <div id="similarImages">
+                <!-- Similar images or verification result will be displayed here -->
+            </div>
+            <div id="analysisResult">
+                <!-- Analysis result will be displayed here -->
+            </div>
+        </div>
+
+    <script>
+        function getQueryParam(param) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(param);
+        }
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const mode = getQueryParam('mode');
+            const pageTitle = document.getElementById('pageTitle');
+            const secondImageInput = document.getElementById('secondImageInput');
+
+            if (mode === 'verify') {
+                pageTitle.textContent = 'Verify Faces';
+                secondImageInput.style.display = 'block';
+            } else if (mode === 'analyze') {
+                pageTitle.textContent = 'Analyze Face';
+            } else {
+                pageTitle.textContent = 'Find Similar Faces';
+            }
+        });
+
+        function uploadImage() {
+            const formData = new FormData();
+            const mode = getQueryParam('mode');
+            const imageInput = document.getElementById('imageInput');
+            formData.append('mode', mode);
+            formData.append('image', imageInput.files[0]);
+
+            if (mode === 'verify') {
+                const secondImageInput = document.getElementById('secondImageInput');
+                formData.append('second_image', secondImageInput.files[0]);
+            }
+
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                const uploadedImageDiv = document.getElementById('uploadedImage');
+                uploadedImageDiv.innerHTML = ''; // Clear previous image
+                if (mode === 'verify') {
+                    if (data.uploaded_image && data.second_uploaded_image) {
+                        const uploadedImage = document.createElement('img');
+                        uploadedImage.src = data.uploaded_image;
+                        uploadedImageDiv.appendChild(uploadedImage);
+
+                        const secondUploadedImage = document.createElement('img');
+                        secondUploadedImage.src = data.second_uploaded_image;
+                        uploadedImageDiv.appendChild(secondUploadedImage);
+                    }
+                } else {
+                    if (data.uploaded_image) {
+                        const uploadedImage = document.createElement('img');
+                        uploadedImage.src = data.uploaded_image;
+                        uploadedImageDiv.appendChild(uploadedImage);
+                    }
+                }
+
+                const similarImagesDiv = document.getElementById('similarImages');
+                similarImagesDiv.innerHTML = ''; // Clear previous images/results
+                const analysisResultDiv = document.getElementById('analysisResult');
+                analysisResultDiv.innerHTML = ''; // Clear previous analysis results
+
+                if (mode === 'find') {
+                    if (data.similar_images) {
+                        data.similar_images.forEach(imgUrl => {
+                            const imgElement = document.createElement('img');
+                            imgElement.src = imgUrl;
+                            similarImagesDiv.appendChild(imgElement);
+                        });
+                    }
+                } else if (mode === 'verify') {
+                    if (data.verification_result !== undefined) {
+                        const resultText = document.createElement('p');
+                        resultText.textContent = `Verification result: ${data.verification_result}`;
+                        similarImagesDiv.appendChild(resultText);
+                    }
+                } else if (mode === 'analyze') {
+                    if (data.analysis_result !== undefined) {
+                        const resultText = document.createElement('pre');
+                        resultText.textContent = JSON.stringify(data.analysis_result, null, 2);
+                        analysisResultDiv.appendChild(resultText);
+                    }
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                const similarImagesDiv = document.getElementById('similarImages');
+                similarImagesDiv.innerHTML = 'An error occurred while processing the image.';
+            });
+        }
+    </script>
+
+</body>
+</html>
