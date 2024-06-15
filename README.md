@@ -40,8 +40,8 @@ python app.py
 
 Choose the mode:
 
-![page1](C:\Users\15405\Desktop\git_cv\cv_finalproject\img\page1.jpg)
+![page1](img/page1.jpg)
 
 Upload the file and generate results:
 
-![page2](C:\Users\15405\Desktop\git_cv\cv_finalproject\img\page2.jpg)
+![page2](img/page2.jpg)
