@@ -40,8 +40,8 @@ python app.py
 
 Choose the mode:
 
-![image-20240615213207199](C:\Users\15405\AppData\Roaming\Typora\typora-user-images\image-20240615213207199.png)
+![page1](C:\Users\15405\Desktop\git_cv\cv_finalproject\img\page1.jpg)
 
-Upload file and generate the result:
+Upload the file and generate results:
 
-![image-20240615213350151](C:\Users\15405\AppData\Roaming\Typora\typora-user-images\image-20240615213350151.png)
+![page2](C:\Users\15405\Desktop\git_cv\cv_finalproject\img\page2.jpg)
